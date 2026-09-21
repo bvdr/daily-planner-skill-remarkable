@@ -67,13 +67,17 @@ a missing integration; fall back to interviewing.
 
 ## Step 6 - Build the HTML
 
-Follow `reference/modules.md`:
+Follow `reference/modules.md` (it has the exact HTML for every module):
 - Write the page-setup head with the **literal** `@page { size: <w>mm <h>mm; margin: 0 }`
-  from the chosen device, and `--toolbar-side-pad-left/right` from its toolbar side+mm.
+  from the chosen device, and set `--pad-left`/`--pad-right` so the toolbar side gets the
+  wider padding (reMarkable = left, Supernote = right; see `devices.json`).
 - Paste the full contents of `assets/planner.css` into the `<style>`.
-- Assemble the chosen modules across the two columns (schedule left; priorities /
-  follow-up / notes right, longest first).
-- On a **mono** device set `--accent: #000` and make sure nothing depends on colour.
+- On a **colour** device (reMarkable Paper Pro) use `<body class="color">` so the weather
+  icon renders warm; omit the class on mono devices (the sun falls back to black).
+- Weather: pick the icon for the condition from `assets/weather-icons.md`, and wrap every
+  degree mark in `<span class="deg">&deg;</span>`.
+- Assemble: header, weather, then `.cols` (schedule left; priorities + follow-up right),
+  then a full-width notes module, then the footer.
 
 **E-ink rules (do not break these - see the device `render.guidelines`):**
 - Body text pure black. Form lines, rules and boxes at 30-40% black (`#999`-`#a8a8a8`).
@@ -108,6 +112,9 @@ Confirm to the user what was sent, to which device, and the file name. Keep it s
 
 ## Notes
 - Everything the skill needs is in this folder: `reference/devices.json`,
-  `reference/modules.md`, `assets/planner.css`, `scripts/render.py`.
-- The reference layout is a two-column sheet: header + full-width weather strip on top,
-  schedule timeline left, priorities / follow-up / notes right, small footer.
+  `reference/modules.md`, `assets/planner.css`, `assets/weather-icons.md`,
+  `scripts/render.py`.
+- The reference layout: header + full-width weather strip on top, then two columns
+  (schedule timeline left; priorities + follow-up right), then a full-width notes box and
+  a small footer. Fonts prefer Georgia / Helvetica Neue / Menlo and fall back to Google's
+  Gelasio / Arimo / Cousine, loaded by `planner.css`.

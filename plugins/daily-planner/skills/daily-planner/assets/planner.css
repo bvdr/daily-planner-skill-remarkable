@@ -1,111 +1,118 @@
-/* Folio Daily One Sheet - e-ink stylesheet.
-   Tunables live in :root. The skill sets --page-w / --page-h / --toolbar-side-pad
-   to match the chosen device, and writes the literal @page rule in the HTML head
-   (see modules.md) because @page size cannot read a CSS variable. All borders are
-   in pt so they snap near whole device pixels: 0.75pt is ~2-3px on these panels. */
+/* Folio Daily One Sheet - e-ink stylesheet, matched to the reference sheet.
+   Fonts: prefer the originals (Georgia / Helvetica Neue / Menlo, present on macOS);
+   fall back to Google's metric-compatible Gelasio / Arimo / Cousine so it renders the
+   same on Linux/CI. All borders in pt so lines snap near whole device pixels. */
+
+@import url('https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,400&family=Arimo:ital,wght@0,400;0,700;1,400&family=Cousine:wght@400;700&display=swap');
 
 :root {
-  --ink: #000;              /* body text + strong marks: pure black */
+  --ink: #000;              /* text + strong marks: pure black */
   --form: #9a9a9a;          /* form lines, rules, boxes: 30-40% black */
   --line: 0.75pt;           /* default rule weight (~2-3 device px) */
   --line-strong: 1pt;
-  --pad: 12mm;              /* outer page padding */
-  --toolbar-side-pad: 0mm;  /* extra padding on the toolbar side; set per device */
-  --gap: 6mm;
-  --accent: #000;           /* colour accent; overridden to #000 on mono devices */
-  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
-  --sans: "Inter", Helvetica, Arial, sans-serif;
+  --pad-top: 12mm;
+  --pad-bottom: 12mm;
+  --pad-left: 18mm;         /* wider: keeps the reMarkable left tool rail clear */
+  --pad-right: 12mm;
+  --gap: 3mm;
+  --sun: #000;              /* mono default: filled-black sun. Colour devices override. */
+  --serif: Georgia, "Gelasio", "Times New Roman", serif;
+  --sans: "Helvetica Neue", Helvetica, "Arimo", Arial, sans-serif;
+  --mono: "Menlo", "Cousine", "Courier New", monospace;
 }
+body.color { --sun: #f4b400; }   /* colour e-ink (reMarkable Paper Pro): warm sun */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 html, body { background: #fff; color: var(--ink); }
-
 body {
-  font-family: var(--sans);
-  padding: var(--pad);
-  padding-left: calc(var(--pad) + var(--toolbar-side-pad-left, 0mm));
-  padding-right: calc(var(--pad) + var(--toolbar-side-pad-right, 0mm));
+  font-family: var(--sans); font-size: 10pt;
+  padding: var(--pad-top) var(--pad-right) var(--pad-bottom) var(--pad-left);
   -webkit-font-smoothing: antialiased;
 }
-
-.sheet { display: flex; flex-direction: column; gap: var(--gap); height: 100%; }
+.sheet { display: flex; flex-direction: column; gap: var(--gap); min-height: 100%; }
+.deg { font-family: var(--serif); }   /* keep degree marks in the serif */
 
 /* ---- Header ---- */
-.head { display: flex; justify-content: space-between; align-items: flex-end;
-  border-bottom: var(--line-strong) solid var(--ink); padding-bottom: 3mm; }
-.head__date { font-family: var(--serif); font-size: 26pt; line-height: 1; font-weight: 700; }
-.head__sub { font-size: 8pt; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2mm; color: var(--ink); }
-.head__meta { text-align: right; font-size: 8pt; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.5; }
-.head__meta b { font-family: var(--serif); font-size: 15pt; display: block; letter-spacing: 0; }
-
-/* ---- Section label shared by every module ---- */
-.module { break-inside: avoid; }
-.module__head { display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 8pt; letter-spacing: 0.30em; text-transform: uppercase; font-weight: 700;
-  border-bottom: var(--line) solid var(--form); padding-bottom: 1.5mm; margin-bottom: 2.5mm; }
-.module__count { letter-spacing: 0.08em; color: var(--ink); font-weight: 400; }
+.head { display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: var(--line) solid var(--form); padding-bottom: 2.5mm; }
+.head__date { font-family: var(--serif); font-size: 25pt; line-height: 1.05;
+  font-weight: 400; white-space: nowrap; }
+.head__sub { font-size: 8pt; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-top: 3mm; }
+.head__meta { text-align: right; font-size: 8pt; letter-spacing: 0.14em;
+  text-transform: uppercase; line-height: 1.7; padding-top: 1mm; }
+.head__meta b { font-family: var(--serif); font-size: 17pt; font-weight: 400;
+  display: block; letter-spacing: 0; line-height: 1.1; }
 
 /* ---- Weather strip ---- */
-.weather { display: flex; align-items: center; gap: 6mm;
-  border-bottom: var(--line) solid var(--form); padding-bottom: 3mm; }
-.weather__now { display: flex; align-items: baseline; gap: 2mm; }
-.weather__temp { font-family: var(--serif); font-size: 22pt; font-weight: 700; }
-.weather__cond { font-size: 9pt; }
-.weather__stats { font-size: 8pt; line-height: 1.5; color: var(--ink); }
-.weather__hours { margin-left: auto; display: flex; gap: 4mm; text-align: center; }
-.hour { font-size: 7pt; letter-spacing: 0.04em; }
-.hour b { display: block; font-size: 10pt; font-weight: 700; }
+.weather { display: flex; align-items: center; gap: 4mm;
+  border-bottom: var(--line) solid var(--form); padding-bottom: 2mm; }
+.wx { width: 13mm; height: 13mm; flex: none; }
+.wx .cloud { fill: #fff; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+.wx .sun { fill: var(--sun); stroke: var(--sun); stroke-width: 2.4; }
+.weather__now { display: flex; flex-direction: column; }
+.weather__temp { font-family: var(--serif); font-size: 26pt; line-height: 0.9; }
+.weather__temp .deg { font-size: 0.5em; vertical-align: 0.9em; }
+.weather__cond { font-size: 8.5pt; margin-top: 1mm; }
+.weather__div { align-self: stretch; border-left: var(--line) solid var(--form);
+  margin: 1mm 1mm; }
+.weather__stats { font-size: 8pt; line-height: 1.6; white-space: nowrap; }
+.weather__stats b { font-size: 9.5pt; }
+.weather__hours { margin-left: auto; display: flex; gap: 6mm; text-align: center; }
+.hour { font-size: 7.5pt; letter-spacing: 0.06em; }
+.hour b { display: block; font-family: var(--serif); font-size: 13pt; font-weight: 400;
+  margin-top: 1.5mm; }
+.hour .deg { font-size: 0.6em; vertical-align: 0.5em; }
+
+/* ---- Section label (every module) ---- */
+.module { break-inside: avoid; }
+.module__head { display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 9pt; letter-spacing: 0.34em; text-transform: uppercase; font-weight: 700;
+  margin-bottom: 1.5mm; }
+.module__count { letter-spacing: 0.1em; font-weight: 400; font-size: 8pt; }
 
 /* ---- Two-column body ---- */
-.cols { display: flex; gap: var(--gap); flex: 1; }
+.cols { display: flex; gap: 8mm; flex: 1; }
 .col { flex: 1; display: flex; flex-direction: column; gap: var(--gap); }
+.col--left { flex: 0 0 50%; }
 
 /* ---- Schedule timeline ---- */
-.sched { display: flex; flex-direction: column; }
-.slot { display: flex; align-items: stretch; min-height: 8mm;
-  border-top: var(--line) solid var(--form); }
-.slot:last-child { border-bottom: var(--line) solid var(--form); }
-.slot__time { width: 14mm; font-size: 8pt; padding-top: 1mm; color: var(--ink); }
-.slot__event { flex: 1; padding: 1mm 0 1mm 2mm; font-size: 9pt;
-  border-left: var(--line) solid var(--form); }
-.slot__event .dur { font-size: 7pt; letter-spacing: 0.08em; text-transform: uppercase; }
+.sched .slot { display: flex; min-height: 7mm; border-top: var(--line) solid var(--form); }
+.sched .slot:last-child { border-bottom: var(--line) solid var(--form); }
+.slot__time { width: 13mm; flex: none; font-size: 8.5pt; padding-top: 1.8mm; }
+.slot__event { flex: 1; padding: 1.3mm 0 1.3mm 3mm; font-size: 9.5pt; font-weight: 700; }
+.slot__event.has { border-left: var(--line) solid var(--form); }
+.slot__event .dur { font-size: 7.5pt; font-weight: 400; letter-spacing: 0.08em;
+  text-transform: uppercase; margin-left: 1mm; }
 
-/* ---- Priorities (with tick boxes to write on) ---- */
-.prio__item { display: flex; gap: 2.5mm; padding: 2mm 0;
+/* ---- Priorities ---- */
+.prio__item { display: flex; gap: 3mm; padding: 1.2mm 0;
   border-bottom: var(--line) solid var(--form); }
-.prio__check { flex: none; width: 4mm; height: 4mm; margin-top: 0.5mm;
-  border: var(--line) solid var(--ink); }
-.prio__done { position: relative; }
-.prio__done::after { content: ""; position: absolute; left: 0.6mm; top: 1.6mm;
-  width: 2.6mm; height: 1.2mm; border-left: var(--line) solid var(--ink);
-  border-bottom: var(--line) solid var(--ink); transform: rotate(-45deg); }
-.prio__text { font-size: 9pt; line-height: 1.3; }
-.prio__tag { display: block; font-size: 7pt; letter-spacing: 0.12em;
-  text-transform: uppercase; margin-top: 0.5mm; }
-.prio__carry { font-size: 8pt; padding: 2mm 0; }
+.prio__check { flex: none; width: 4mm; height: 4mm; margin-top: 0.6mm;
+  border: var(--line-strong) solid var(--ink); }
+.prio__text { font-size: 9.5pt; line-height: 1.3; }
+.prio__tag { display: block; font-size: 7.5pt; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-top: 0.8mm; }
 
 /* ---- Follow-ups ---- */
-.fu__item { padding: 2mm 0; border-bottom: var(--line) solid var(--form); }
-.fu__top { display: flex; justify-content: space-between; font-size: 8pt;
-  letter-spacing: 0.06em; }
-.fu__title { font-size: 9pt; line-height: 1.3; margin: 0.5mm 0; }
-.fu__meta { font-size: 7pt; letter-spacing: 0.10em; text-transform: uppercase; }
+.fu__item { padding: 1.2mm 0; border-bottom: var(--line) solid var(--form); }
+.fu__top { display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--mono); font-size: 9pt; }
+.fu__age { font-size: 8pt; }
+.fu__title { font-size: 9.5pt; line-height: 1.2; margin: 0.5mm 0; }
+.fu__meta { font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; }
 
-/* ---- Ruled write-on modules (notes, brain dump, gratitude) ---- */
-.lines { display: flex; flex-direction: column; }
+/* ---- Notes / write-on modules ---- */
+.notes__box { flex: 1; min-height: 11mm; border: var(--line) solid var(--form); }
 .lines .ln { border-bottom: var(--line) solid var(--form); height: 8mm; }
 .dotted .ln { border-bottom: var(--line) dotted var(--form); }
 .prompt { font-size: 8pt; font-style: italic; margin-bottom: 2mm; }
-
-/* ---- Habit / checkbox grid ---- */
-.grid { display: grid; gap: 2mm; }
-.cell { border: var(--line) solid var(--ink); height: 5mm; }
-.grid__row { display: flex; align-items: center; gap: 2mm; padding: 1mm 0; }
-.grid__label { flex: 1; font-size: 8pt; }
-.box { width: 5mm; height: 5mm; border: var(--line) solid var(--ink); flex: none; }
+.box { width: 5mm; height: 5mm; border: var(--line-strong) solid var(--ink); flex: none; }
+.grid__row { display: flex; align-items: center; gap: 2mm; padding: 1.2mm 0;
+  border-bottom: var(--line) solid var(--form); }
+.grid__label { flex: 1; font-size: 9pt; }
 
 /* ---- Footer ---- */
-.foot { margin-top: auto; padding-top: 2mm; border-top: var(--line) solid var(--form);
-  display: flex; justify-content: space-between; font-size: 7pt;
+.foot { padding-top: 2.5mm; border-top: var(--line) solid var(--form);
+  display: flex; justify-content: space-between; font-size: 7.5pt;
   letter-spacing: 0.12em; text-transform: uppercase; }

@@ -7,6 +7,9 @@ It interviews you, pulls from whatever you have connected (calendar, tasks, GitH
 weather), renders an e-ink-optimized PDF at the exact page size of your device, and sends
 it through Folio.
 
+
+![Daily one-sheet example, rendered for reMarkable Paper Pro](example.png)
+
 ## What it does
 
 - **Delivers via Folio** - picks the device connected in your Folio account. Suggests

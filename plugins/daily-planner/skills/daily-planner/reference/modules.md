@@ -1,48 +1,57 @@
 # Module catalog
 
-The sheet is assembled from modules the user picks. Each module is a self-contained
-block of HTML that uses the classes in `assets/planner.css`. Build the final HTML by:
+The sheet is assembled from modules the user picks, using the classes in
+`assets/planner.css`. It reproduces the reference "Daily One Sheet": a header, a
+full-width weather strip, a two-column body (schedule left; priorities / follow-up
+right), and a full-width notes box above the footer.
 
-1. Writing the **page setup** head (below) with the chosen device's size + toolbar side.
-2. Dropping in the header + weather strip (if chosen).
-3. Placing the remaining modules across the two `.col` columns, longest first
-   (schedule usually fills the left column; priorities / follow-up / notes fill the right).
-4. Footer.
+Build the final HTML like this:
 
-Keep every module honest: only render a section if there is real content or the user
-wants blank space to write on. Empty ruled space is fine (that is the point of a planner);
-fake data is not.
+1. Write the **page setup** head (below) with the chosen device's page size + toolbar side.
+2. Header, then weather strip.
+3. `.cols` with `.col.col--left` (schedule) and `.col` (priorities, follow-up).
+4. Full-width notes module, then footer.
+
+Only render a section with real content, or a blank write-on section the user asked for.
+Blank ruled/boxed space is the point of a planner; fabricated events or tasks are not.
+
+The reference module set fits one page at the sizes in `planner.css`. If the user picks
+many long modules and it spills to a second page, drop a module, shorten items, or
+narrow the schedule hour range rather than shrinking type below the sizes given.
 
 ---
 
 ## Page setup (write this per device)
 
-`@page` size cannot read a CSS variable, so write it literally. `--toolbar-side-pad-left`
-/ `-right` keeps the device's tool rail from covering content (see `devices.json`
-`toolbar_side` + `toolbar_mm`). On a mono device set `--accent: #000`.
+`@page` size cannot read a CSS variable, so write it literally from the device
+`page_mm`. Put `<body class="color">` for a colour device (reMarkable Paper Pro) so the
+sun icon renders warm; omit the class on mono devices. Set the toolbar padding from
+`devices.json` (`toolbar_side` + `toolbar_mm`) so the tool rail never covers content.
 
 ```html
-<!doctype html><html><head><meta charset="utf-8">
-<style>
-@page { size: 179.7mm 239.5mm; margin: 0; }   /* <- chosen device page_mm */
-:root { --toolbar-side-pad-left: 14mm; }        /* <- toolbar_mm on toolbar_side */
+<!doctype html><html><head><meta charset="utf-8"><style>
+@page { size: 179.7mm 239.5mm; margin: 0; }   /* <- device page_mm */
+:root { --pad-left: 18mm; }                     /* toolbar side gets the wider pad */
 /* paste the full contents of assets/planner.css here */
 </style></head>
-<body><div class="sheet">
-  <!-- header, weather, .cols, footer -->
+<body class="color"><div class="sheet">
+  <!-- header, weather, .cols, notes, footer -->
 </div></body></html>
 ```
 
-Deliver via Folio: render to PDF with `scripts/render.py`, then `create_upload` +
-`send_file` (reMarkable/Kindle), or Dropbox/Drive for Supernote. Name the file
+reMarkable tool rail is on the **left**, so keep `--pad-left` wide (default 18mm).
+Supernote's is on the right: set `--pad-right: 18mm` and `--pad-left: 12mm` instead.
+
+Deliver: render with `scripts/render.py`, then Folio `create_upload` + `send_file`
+(reMarkable / Kindle) or Dropbox / Drive (Supernote). Name the file
 `DD.MM.YYYY - Daily Plan - <Device label>.pdf` in the user's local date.
 
 ---
 
-## Core modules (these match the reference one-sheet)
+## Core modules (match the reference sheet)
 
 ### header  (always on)
-Data: date, city (from location), ISO week number, day-of-year.
+Date on one line (serif). Right side: week number + day-of-year.
 ```html
 <div class="head">
   <div><div class="head__date">Thursday, 10 September</div>
@@ -51,85 +60,101 @@ Data: date, city (from location), ISO week number, day-of-year.
 </div>
 ```
 
-### weather  — source: a weather API / connected tool, keyed on the user's location
-Data: current temp + condition, high/low, rain %, wind, sunset, a few hourly points.
+### weather  — source: a weather API keyed on the confirmed location
+Pick the icon from `assets/weather-icons.md` by condition. Every degree mark is wrapped
+in `<span class="deg">&deg;</span>` so it stays in the serif and superscripts correctly.
 ```html
 <div class="weather">
-  <div class="weather__now"><span class="weather__temp">24&deg;</span>
-       <span class="weather__cond">Partly cloudy</span></div>
-  <div class="weather__stats">H 27&deg; &nbsp; L 14&deg;<br>Rain 10% &middot; Wind 12 km/h<br>Sunset 19:42</div>
+  <!-- paste the chosen icon svg from weather-icons.md here -->
+  <div class="weather__now">
+    <span class="weather__temp">24<span class="deg">&deg;</span></span>
+    <span class="weather__cond">Partly cloudy</span>
+  </div>
+  <div class="weather__div"></div>
+  <div class="weather__stats"><b>H 27<span class="deg">&deg;</span> &nbsp; L 14<span class="deg">&deg;</span></b><br>
+    Rain 10% &middot; Wind 12 km/h<br>Sunset 19:42</div>
   <div class="weather__hours">
-    <div class="hour">09<b>19&deg;</b></div><div class="hour">12<b>23&deg;</b></div>
-    <div class="hour">15<b>27&deg;</b></div><div class="hour">18<b>24&deg;</b></div>
-    <div class="hour">21<b>17&deg;</b></div>
+    <div class="hour">09<b>19<span class="deg">&deg;</span></b></div>
+    <div class="hour">12<b>23<span class="deg">&deg;</span></b></div>
+    <div class="hour">15<b>27<span class="deg">&deg;</span></b></div>
+    <div class="hour">18<b>24<span class="deg">&deg;</span></b></div>
+    <div class="hour">21<b>17<span class="deg">&deg;</span></b></div>
   </div>
 </div>
 ```
 
-### schedule  — source: Google Calendar / user's dictation
-Hour rows from the user's day start to end; events sit in the right cell. Leave empty
-hours blank to write in. `.dur` is an optional duration chip.
+### schedule  — source: Google Calendar / dictation
+One `.slot` per hour from the user's day start to end. Add `has` to `.slot__event` when
+it holds an event (that draws the short left tick); leave empty ones blank to write in.
+`.dur` is an optional duration chip.
 ```html
 <div class="module sched">
   <div class="module__head">Schedule <span class="module__count">5 events</span></div>
   <div class="slot"><div class="slot__time">08:00</div><div class="slot__event"></div></div>
-  <div class="slot"><div class="slot__time">09:00</div><div class="slot__event">Standup <span class="dur">15m</span></div></div>
+  <div class="slot"><div class="slot__time">09:00</div><div class="slot__event has">Standup <span class="dur">15m</span></div></div>
   <div class="slot"><div class="slot__time">10:00</div><div class="slot__event"></div></div>
   <!-- one .slot per hour -->
 </div>
 ```
 
 ### priorities  — source: user, Notion/Todoist tasks, GitHub issues assigned
-Tick boxes to check off by hand. Add `prio__done` to `prio__check` to pre-tick.
-Carried-over items use `.prio__carry`.
+Every item has an empty `.prio__check` box to tick by hand. A carried item just prefixes
+`&rarr;` and tags `Carried N days`.
 ```html
 <div class="module">
   <div class="module__head">Priorities <span class="module__count">3 of 6</span></div>
   <div class="prio__item"><div class="prio__check"></div>
     <div><div class="prio__text">Ship reMarkable send-file spine</div>
          <span class="prio__tag">Folio &middot; due today</span></div></div>
-  <div class="prio__carry">&rarr; Draft Q3 retro notes <span class="prio__tag">carried 2 days</span></div>
+  <div class="prio__item"><div class="prio__check"></div>
+    <div><div class="prio__text">&rarr; Draft Q3 retro notes</div>
+         <span class="prio__tag">Carried 2 days</span></div></div>
 </div>
 ```
 
-### follow-up  — source: GitHub (PRs/issues), Slack, Gmail threads owed a reply
+### follow-up  — source: GitHub PRs/issues, Slack, Gmail threads owed a reply
+Repo/ref line is monospace with the age on the right.
 ```html
 <div class="module">
   <div class="module__head">Follow up <span class="module__count">GitHub &middot; 3</span></div>
   <div class="fu__item">
-    <div class="fu__top"><span>bvdr/folio #412</span><span>3d</span></div>
-    <div class="fu__title">Tables dropped in MCP read path</div>
+    <div class="fu__top"><span>bvdr/folio #412</span><span class="fu__age">3d</span></div>
+    <div class="fu__title">Tables dropped in MCP read path (turndown, no GFM)</div>
     <div class="fu__meta">Awaiting your review</div>
   </div>
 </div>
 ```
 
-### notes  — blank ruled space to write on
+### notes  — full-width box to write in (place after `.cols`)
 ```html
-<div class="module lines">
-  <div class="module__head">Notes</div>
-  <div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div>
-</div>
+<div class="module"><div class="module__head">Notes <span class="module__count">&mdash;</span></div>
+  <div class="notes__box"></div></div>
+```
+
+### footer
+```html
+<div class="foot"><span>10 September 2026 &middot; Folio</span><span>reMarkable Paper Pro</span></div>
 ```
 
 ---
 
 ## Extra modules (offer these when asking "what to include")
 
-- **top-3** — three big empty boxes for the day's most-important tasks (`.box` + label).
-- **habit-tracker** — `.grid__row` per habit with a `.box` to tick.
-- **time-block** — like `schedule` but 30-min rows and no event text, pure planning grid.
-- **water-health** — a row of 8 `.box` cups + a steps/sleep line.
-- **meals** — Breakfast / Lunch / Dinner ruled lines (`.lines`).
-- **workout** — movement plan + a done box.
-- **gratitude** — a `.prompt` line ("Three things...") over `.dotted` ruled lines.
-- **reading** — the user's Folio reading queue: call `list_articles` and list a few titles with source.
-- **quote** — a single centered line, quote of the day.
-- **mood-energy** — a 1-5 scale row (five `.box`) for mood and for energy.
-- **sleep** — last night hours + a quality 1-5 row.
-- **expenses** — 3-4 ruled lines with an amount column to jot spend.
-- **daylight** — sunrise / sunset / daylight length (from location); pairs well without full weather.
-- **brain-dump** — a large `.dotted` ruled block for free writing.
+Reuse the same classes.
 
-All extras reuse the same classes (`.module`, `.lines`, `.box`, `.grid__row`). Compact
-devices (Kindle, Supernote Nomad) should carry 3-4 modules max.
+- **top-3** — three big `.box` squares with a label, for the day's most-important tasks.
+- **habit-tracker** — `.grid__row` per habit with a `.box` to tick.
+- **time-block** — `sched` with 30-min rows and empty events, a pure planning grid.
+- **water-health** — a row of 8 `.box` cups plus a steps / sleep line.
+- **meals** — Breakfast / Lunch / Dinner over `.lines`.
+- **workout** — a movement plan line with a done `.box`.
+- **gratitude** — a `.prompt` ("Three things...") over `.dotted .ln` lines.
+- **reading** — the user's Folio queue: `mcp__folio__list_articles`, list a few titles + source.
+- **quote** — a single centered serif line.
+- **mood-energy** — two rows of five `.box` (a 1-5 scale) for mood and energy.
+- **sleep** — hours slept + a 1-5 quality row of `.box`.
+- **expenses** — 3-4 `.lines` with room for an amount.
+- **daylight** — sunrise / sunset / daylight length (pairs well when weather is off).
+- **brain-dump** — a large `.dotted` ruled block, or a second `.notes__box`.
+
+Compact devices (Kindle, Supernote Nomad) should carry 3-4 modules max.
