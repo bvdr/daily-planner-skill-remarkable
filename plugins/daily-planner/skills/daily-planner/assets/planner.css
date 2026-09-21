@@ -64,6 +64,14 @@ body {
   margin-top: 1.5mm; }
 .hour .deg { font-size: 0.6em; vertical-align: 0.5em; }
 
+/* 7-day outlook: replaces the hourly strip. day label + mini icon + high/low. */
+.weather__week { margin-left: auto; display: flex; gap: 4mm; text-align: center; }
+.wday { font-size: 7pt; letter-spacing: 0.06em; text-transform: uppercase; }
+.wday .wx { width: 7mm; height: 7mm; display: block; margin: 1mm auto 0.5mm; }
+.wday b { font-family: var(--serif); font-size: 11pt; font-weight: 400; }
+.wday .lo { font-family: var(--serif); font-size: 9pt; margin-left: 1.5mm; }
+.wday .deg { font-size: 0.6em; vertical-align: 0.5em; }
+
 /* ---- Section label (every module) ---- */
 .module { break-inside: avoid; }
 .module__head { display: flex; justify-content: space-between; align-items: baseline;

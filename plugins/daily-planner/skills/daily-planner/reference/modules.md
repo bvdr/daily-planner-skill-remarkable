@@ -83,6 +83,20 @@ in `<span class="deg">&deg;</span>` so it stays in the serif and superscripts co
 </div>
 ```
 
+**Week outlook (alternative to the hourly strip).** Swap `.weather__hours` for
+`.weather__week` to show the next 7 days instead: each day gets its label, a mini icon
+(the same SVGs from `weather-icons.md`, they scale to the 7mm `.wday .wx`), a bold high
+and a lighter low. Drop the H/L from `.weather__stats` (or the whole stats block) when
+you use this, since the week already carries highs and lows. Ask the user which they want.
+```html
+  <div class="weather__week">
+    <div class="wday">Mon <!-- icon svg --><b>26<span class="deg">&deg;</span></b><span class="lo">13<span class="deg">&deg;</span></span></div>
+    <div class="wday">Tue <!-- icon svg --><b>24<span class="deg">&deg;</span></b><span class="lo">12<span class="deg">&deg;</span></span></div>
+    <!-- ...through Sun (7 cells) -->
+  </div>
+</div>
+```
+
 ### schedule  — source: Google Calendar / dictation
 One `.slot` per hour from the user's day start to end. Add `has` to `.slot__event` when
 it holds an event (that draws the short left tick); leave empty ones blank to write in.
