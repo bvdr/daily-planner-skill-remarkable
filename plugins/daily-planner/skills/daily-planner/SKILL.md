@@ -68,16 +68,20 @@ a missing integration; fall back to interviewing.
 ## Step 6 - Build the HTML
 
 Follow `reference/modules.md` (it has the exact HTML for every module):
-- Write the page-setup head with the **literal** `@page { size: <w>mm <h>mm; margin: 0 }`
-  from the chosen device, and set `--pad-left`/`--pad-right` so the toolbar side gets the
-  wider padding (reMarkable = left, Supernote = right; see `devices.json`).
+- Write the page-setup head with the **literal** `@page { size: <w>mm <h>mm; margin: ... }`
+  from the chosen device. Margins live in the `@page` rule so every page (incl. an extra
+  lined page) gets them; give the **toolbar side the wider margin** (reMarkable = left ->
+  `12mm 12mm 12mm 18mm`; Supernote = right -> `12mm 18mm 12mm 12mm`; Kindle = `12mm`).
 - Paste the full contents of `assets/planner.css` into the `<style>`.
 - On a **colour** device (reMarkable Paper Pro) use `<body class="color">` so the weather
   icon renders warm; omit the class on mono devices (the sun falls back to black).
 - Weather: pick the icon for the condition from `assets/weather-icons.md`, and wrap every
   degree mark in `<span class="deg">&deg;</span>`.
 - Assemble: header, weather, then `.cols` (schedule left; priorities + follow-up right),
-  then a full-width notes module, then the footer.
+  then a full-width notes module, then the footer. A half-hour schedule (09:00-17:00) is a
+  good work-day default; add `half` to each `:30` row.
+- If the user wants more writing room, add one or more `.page2` lined pages after the
+  `.sheet` (see `reference/modules.md`).
 
 **E-ink rules (do not break these - see the device `render.guidelines`):**
 - Body text pure black. Form lines, rules and boxes at 30-40% black (`#999`-`#a8a8a8`).

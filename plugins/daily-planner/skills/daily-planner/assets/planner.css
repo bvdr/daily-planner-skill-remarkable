@@ -10,10 +10,6 @@
   --form: #9a9a9a;          /* form lines, rules, boxes: 30-40% black */
   --line: 0.75pt;           /* default rule weight (~2-3 device px) */
   --line-strong: 1pt;
-  --pad-top: 12mm;
-  --pad-bottom: 12mm;
-  --pad-left: 18mm;         /* wider: keeps the reMarkable left tool rail clear */
-  --pad-right: 12mm;
   --gap: 3mm;
   --sun: #000;              /* mono default: filled-black sun. Colour devices override. */
   --serif: Georgia, "Gelasio", "Times New Roman", serif;
@@ -26,7 +22,7 @@ body.color { --sun: #f4b400; }   /* colour e-ink (reMarkable Paper Pro): warm su
 html, body { background: #fff; color: var(--ink); }
 body {
   font-family: var(--sans); font-size: 10pt;
-  padding: var(--pad-top) var(--pad-right) var(--pad-bottom) var(--pad-left);
+  padding: 0;   /* page margins come from the @page rule so page 2 gets them too */
   -webkit-font-smoothing: antialiased;
 }
 .sheet { display: flex; flex-direction: column; gap: var(--gap); min-height: 100%; }
@@ -85,7 +81,9 @@ body {
 .col--left { flex: 0 0 50%; }
 
 /* ---- Schedule timeline ---- */
-.sched .slot { display: flex; min-height: 7mm; border-top: var(--line) solid var(--form); }
+.sched .slot { display: flex; min-height: 5.6mm; border-top: var(--line) solid var(--form); }
+.sched .slot.half { border-top-style: dotted; }
+.sched .slot.half .slot__time { font-size: 7.5pt; }
 .sched .slot:last-child { border-bottom: var(--line) solid var(--form); }
 .slot__time { width: 13mm; flex: none; font-size: 8.5pt; padding-top: 1.8mm; }
 .slot__event { flex: 1; padding: 1.3mm 0 1.3mm 3mm; font-size: 9.5pt; font-weight: 700; }
@@ -124,3 +122,14 @@ body {
 .foot { padding-top: 2.5mm; border-top: var(--line) solid var(--form);
   display: flex; justify-content: space-between; font-size: 7.5pt;
   letter-spacing: 0.12em; text-transform: uppercase; }
+
+
+/* ---- Page 2: a full ruled page for longer notes ---- */
+.page2 { break-before: page; display: flex; flex-direction: column; min-height: 100%; }
+.p2head { display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 9pt; letter-spacing: 0.34em; text-transform: uppercase; font-weight: 700;
+  border-bottom: var(--line-strong) solid var(--ink); padding-bottom: 2.5mm; }
+.p2head span:last-child { font-family: var(--serif); font-size: 12pt; letter-spacing: 0;
+  text-transform: none; font-weight: 400; }
+.page2 .lines { flex: 1; margin-top: 4mm; }
+.page2 .ln { height: 9mm; }

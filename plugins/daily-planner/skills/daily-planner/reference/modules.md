@@ -30,17 +30,19 @@ sun icon renders warm; omit the class on mono devices. Set the toolbar padding f
 
 ```html
 <!doctype html><html><head><meta charset="utf-8"><style>
-@page { size: 179.7mm 239.5mm; margin: 0; }   /* <- device page_mm */
-:root { --pad-left: 18mm; }                     /* toolbar side gets the wider pad */
+@page { size: 179.7mm 239.5mm; margin: 12mm 12mm 12mm 18mm; }  /* top right bottom left */
 /* paste the full contents of assets/planner.css here */
 </style></head>
-<body class="color"><div class="sheet">
-  <!-- header, weather, .cols, notes, footer -->
-</div></body></html>
+<body class="color">
+  <div class="sheet"><!-- header, weather, .cols, notes, footer --></div>
+  <!-- optional extra lined page(s) go here, see "lined page" below -->
+</body></html>
 ```
 
-reMarkable tool rail is on the **left**, so keep `--pad-left` wide (default 18mm).
-Supernote's is on the right: set `--pad-right: 18mm` and `--pad-left: 12mm` instead.
+Margins live in the **`@page` rule** so every printed page (including an extra lined page)
+gets them. The **toolbar side gets the wider margin**: reMarkable's rail is on the left,
+so `margin: 12mm 12mm 12mm 18mm`. Supernote's is on the right, so flip it to
+`margin: 12mm 18mm 12mm 12mm`. Kindle Scribe has no rail: `margin: 12mm`.
 
 Deliver: render with `scripts/render.py`, then Folio `create_upload` + `send_file`
 (reMarkable / Kindle) or Dropbox / Drive (Supernote). Name the file
@@ -98,17 +100,24 @@ you use this, since the week already carries highs and lows. Ask the user which 
 ```
 
 ### schedule  — source: Google Calendar / dictation
-One `.slot` per hour from the user's day start to end. Add `has` to `.slot__event` when
-it holds an event (that draws the short left tick); leave empty ones blank to write in.
-`.dur` is an optional duration chip.
+One `.slot` per time step. Ask the user for the range and granularity; a **half-hour**
+grid (e.g. 09:00-17:00) is a good work-day default and fills the column well. Add `has`
+to `.slot__event` when it holds an event (draws the short left tick); leave empty ones
+blank to write in. Add `half` to the `.slot` on every `:30` row so its rule is dotted and
+its time smaller, which keeps the whole hours reading as the strong lines. `.dur` is an
+optional duration chip.
 ```html
 <div class="module sched">
   <div class="module__head">Schedule <span class="module__count">5 events</span></div>
   <div class="slot"><div class="slot__time">08:00</div><div class="slot__event"></div></div>
   <div class="slot"><div class="slot__time">09:00</div><div class="slot__event has">Standup <span class="dur">15m</span></div></div>
   <div class="slot"><div class="slot__time">10:00</div><div class="slot__event"></div></div>
-  <!-- one .slot per hour -->
+  <!-- one .slot per step -->
 </div>
+```
+Half-hour rows just add `half` and a `:30` time:
+```html
+<div class="slot half"><div class="slot__time">09:30</div><div class="slot__event"></div></div>
 ```
 
 ### priorities  — source: user, Notion/Todoist tasks, GitHub issues assigned
@@ -148,6 +157,20 @@ Repo/ref line is monospace with the age on the right.
 ### footer
 ```html
 <div class="foot"><span>10 September 2026 &middot; Folio</span><span>reMarkable Paper Pro</span></div>
+```
+
+### lined page  (optional extra page after the sheet)
+A full ruled page for longer notes. Put it **after** `</div>` of `.sheet`, still inside
+`<body>`. `.page2` forces a page break and fills the page with ruled lines; it inherits
+the same `@page` margins (so the toolbar side stays clear). Add more `.page2` blocks for
+more pages. Use `dotted` on `.lines` for a dot grid instead of rules.
+```html
+<div class="page2">
+  <div class="p2head"><span>Notes</span><span>Thursday, 10 September</span></div>
+  <div class="lines">
+    <div class="ln"></div><!-- ~22 lines fill the page -->
+  </div>
+</div>
 ```
 
 ---
