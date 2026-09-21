@@ -1,0 +1,83 @@
+{
+  "_comment": "Device render profiles. page_mm = [width, height] of the writable page. stroke_pt = [min,max] for whole-pixel lines. toolbar_side/toolbar_mm = keep this side clear so the on-screen tool menu never covers content. ppi and px are the panel's; they are the calibration knobs. Folio devices (reMarkable, Kindle) override page_mm at runtime from list_targets when present; the others here are the ones Folio does not list yet, so these values ARE the source of truth for them. Tune ppi/px against a real device if a line looks off.",
+  "profiles": {
+    "remarkable-paper-pro": {
+      "label": "reMarkable Paper Pro",
+      "page_mm": [179.7, 239.5],
+      "px": [1620, 2160],
+      "ppi": 229,
+      "color": true,
+      "stroke_pt": [0.63, 0.94],
+      "hairline_pt": 0.31,
+      "toolbar_side": "left",
+      "toolbar_mm": 14,
+      "folio_type": "remarkable",
+      "notes": "Colour but muted; prefer black. Left tool rail is movable but default-left, so keep the left margin clear."
+    },
+    "remarkable-2": {
+      "label": "reMarkable 2",
+      "page_mm": [157.3, 210.4],
+      "px": [1404, 1872],
+      "ppi": 226,
+      "color": false,
+      "stroke_pt": [0.62, 0.94],
+      "hairline_pt": 0.32,
+      "toolbar_side": "left",
+      "toolbar_mm": 14,
+      "folio_type": "remarkable",
+      "notes": "Greyscale. Anything relying on colour must also read in black."
+    },
+    "kindle-scribe": {
+      "label": "Kindle Scribe",
+      "page_mm": [157.5, 210.0],
+      "px": [1860, 2480],
+      "ppi": 300,
+      "color": false,
+      "stroke_pt": [0.48, 0.72],
+      "hairline_pt": 0.24,
+      "toolbar_side": "none",
+      "toolbar_mm": 0,
+      "folio_type": "kindle",
+      "notes": "Greyscale, no persistent side rail in the reader. Delivered via the Kindle target (send-to-Kindle email) or Dropbox/Drive."
+    },
+    "supernote-a5x": {
+      "label": "Supernote A5X / A5X2 Manta",
+      "page_mm": [157.8, 210.4],
+      "px": [1404, 1872],
+      "ppi": 226,
+      "color": false,
+      "stroke_pt": [0.62, 0.94],
+      "hairline_pt": 0.32,
+      "toolbar_side": "right",
+      "toolbar_mm": 12,
+      "folio_type": null,
+      "notes": "Not a Folio device type. Deliver via Dropbox or Google Drive (Supernote syncs from cloud) or hand the user the PDF. Manta (A5X2) panel is 1920x2560 @300ppi if you want to retune; A5X uses the values here. Floating tool bar sits right by default."
+    },
+    "supernote-a6x2": {
+      "label": "Supernote A6X2 Nomad",
+      "page_mm": [118.0, 157.0],
+      "px": [1404, 1872],
+      "ppi": 300,
+      "color": false,
+      "stroke_pt": [0.48, 0.72],
+      "hairline_pt": 0.24,
+      "toolbar_side": "right",
+      "toolbar_mm": 10,
+      "folio_type": null,
+      "notes": "7.8-inch pocket size. Fewer modules fit; prefer a compact layout. Deliver via Dropbox/Drive."
+    },
+    "kindle-paperwhite": {
+      "label": "Kindle (Paperwhite/basic)",
+      "page_mm": [107.0, 142.0],
+      "px": [1264, 1680],
+      "ppi": 300,
+      "color": false,
+      "stroke_pt": [0.48, 0.72],
+      "hairline_pt": 0.24,
+      "toolbar_side": "none",
+      "toolbar_mm": 0,
+      "folio_type": "kindle",
+      "notes": "Small screen. Keep to 3-4 modules; it is a reader, not a writing tablet."
+    }
+  }
+}

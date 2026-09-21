@@ -1,0 +1,16 @@
+{
+  "name": "daily-planner-remarkable",
+  "owner": {
+    "name": "Bogdan Dragomir",
+    "url": "https://github.com/bvdr"
+  },
+  "description": "A modular daily-planner skill that builds an e-ink one-sheet and sends it to your reMarkable, Supernote, Kindle Scribe or other tablet via Folio.",
+  "plugins": [
+    {
+      "name": "daily-planner",
+      "source": "./plugins/daily-planner",
+      "description": "Interviews you, pulls from your connected tools, and renders a modular daily planner sized for your e-ink device, then delivers it with Folio.",
+      "version": "0.1.0"
+    }
+  ]
+}

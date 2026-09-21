@@ -1,0 +1,12 @@
+{
+  "name": "daily-planner",
+  "description": "Build a modular daily-planner one-sheet for your e-ink tablet (reMarkable, Supernote, Kindle Scribe) and deliver it via Folio.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Bogdan Dragomir",
+    "url": "https://github.com/bvdr"
+  },
+  "homepage": "https://github.com/bvdr/daily-planner-skill-remarkable",
+  "repository": "https://github.com/bvdr/daily-planner-skill-remarkable",
+  "license": "MIT"
+}
