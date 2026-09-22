@@ -173,6 +173,22 @@ more pages. Use `dotted` on `.lines` for a dot grid instead of rules.
 </div>
 ```
 
+### meeting notes  (optional, one half-page per meeting)
+When the day has meetings, add a page of two half-page ruled sections per meeting after
+the lined page(s). Each `.mtg` gets an **inline height** of half the page's content box so
+exactly two fit with no overflow (the builder computes it; for a 179.7x239.5 sheet with
+12mm top/bottom margins that is about 102.75mm). Pair meetings two per `.mtg-page`.
+```html
+<div class="mtg-page">
+  <div class="mtg" style="height:102.8mm">
+    <div class="mtg__head"><span class="mtg__title">Standup</span>
+      <span class="mtg__time">09:00 &middot; 15m</span></div>
+    <div class="lines"><div class="ln"></div><!-- 9 flex lines fill the half --></div>
+  </div>
+  <div class="mtg" style="height:102.8mm"><!-- second meeting, same shape --></div>
+</div>
+```
+
 ---
 
 ## Extra modules (offer these when asking "what to include")

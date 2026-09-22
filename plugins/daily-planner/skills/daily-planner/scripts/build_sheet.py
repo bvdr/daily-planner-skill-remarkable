@@ -204,6 +204,40 @@ def lined_page(title, date_line):
             f'<span>{esc(date_line)}</span></div><div class="lines">{lns}</div></div>')
 
 
+def meeting_pages(schedule, enabled, sec_h_mm):
+    """One half-page ruled notes section per meeting, two per page, after the sheet.
+
+    Meetings are the schedule events that have text, in time order. `enabled` defaults
+    to True when there are meetings; pass "meeting_notes": false in the data to skip.
+    `sec_h_mm` is the fixed height of each half so exactly two fit a page (no overflow).
+    """
+    if not schedule or enabled is False:
+        return ""
+    events = schedule.get("events", {})
+    meetings = sorted((t, e) for t, e in events.items() if e.get("text"))
+    if not meetings:
+        return ""
+
+    def section(item):
+        if item is None:
+            return f'<div class="mtg" style="height:{sec_h_mm:.1f}mm"></div>'  # empty bottom half (odd count)
+        t, e = item
+        dur = f' &middot; {esc(e.get("dur"))}' if e.get("dur") else ""
+        lns = ''.join('<div class="ln"></div>' for _ in range(9))
+        return (f'<div class="mtg" style="height:{sec_h_mm:.1f}mm"><div class="mtg__head">'
+                f'<span class="mtg__title">{esc(e.get("text"))}</span>'
+                f'<span class="mtg__time">{t}{dur}</span></div>'
+                f'<div class="lines">{lns}</div></div>')
+
+    out = []
+    for i in range(0, len(meetings), 2):
+        pair = meetings[i:i + 2]
+        top = section(pair[0])
+        bottom = section(pair[1] if len(pair) > 1 else None)
+        out.append(f'<div class="mtg-page">{top}{bottom}</div>')
+    return ''.join(out)
+
+
 def margin_for(side):
     if side == "right":
         return "12mm 18mm 12mm 12mm"
@@ -222,10 +256,16 @@ def build(d):
              + '<div class="col">' + right + '</div></div>'
              + (notes() if d.get("notes", True) else "") + footer(d) + '</div>')
     pages = ''.join(lined_page("Notes", d.get("date_line")) for _ in range(int(d.get("lined_pages", 0))))
+    # each meeting note is half the page's content box, so two fit a page with no overflow
+    parts = margin.split()
+    top = float(parts[0].replace("mm", ""))
+    bottom = float((parts[2] if len(parts) == 4 else parts[0]).replace("mm", ""))
+    sec_h = (h - top - bottom - 10) / 2  # 8mm gap between the two halves + 2mm safety
+    mtgs = meeting_pages(d.get("schedule"), d.get("meeting_notes"), sec_h)
     return ('<!doctype html><html><head><meta charset="utf-8"><style>'
             f'@page {{ size: {w}mm {h}mm; margin: {margin}; }}'
             + CSS + '</style></head>'
-            f'<body class="{body_class}">' + sheet + pages + '</body></html>')
+            f'<body class="{body_class}">' + sheet + pages + mtgs + '</body></html>')
 
 
 def main():

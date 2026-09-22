@@ -139,3 +139,15 @@ body {
   text-transform: none; font-weight: 400; }
 .page2 .lines { flex: 1; margin-top: 4mm; }
 .page2 .ln { height: 9mm; }
+
+
+/* ---- Meeting-note pages: two half-page ruled sections per page ---- */
+.mtg-page { break-before: page; }
+.mtg { display: flex; flex-direction: column; }   /* height is set inline per device (half the page) */
+.mtg + .mtg { margin-top: 8mm; }
+.mtg__head { display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: var(--line-strong) solid var(--ink); padding-bottom: 2mm; }
+.mtg__title { font-family: var(--serif); font-size: 13pt; }
+.mtg__time { font-size: 8pt; letter-spacing: 0.14em; text-transform: uppercase; }
+.mtg .lines { flex: 1; display: flex; flex-direction: column; margin-top: 3mm; }
+.mtg .ln { flex: 1; border-bottom: var(--line) solid var(--form); }

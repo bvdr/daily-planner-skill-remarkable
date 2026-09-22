@@ -84,6 +84,8 @@ The JSON shape and every field are documented at the top of `scripts/build_sheet
 - Weather `mode: "week"` (7-day outlook). Use `"hourly"` only if the user wants hour-by-hour.
 - Schedule `start "09:00" end "17:00" step_min 30` (a half-hour work-day grid).
 - `notes: true` (a notes box that fills to the footer) and `lined_pages: 1` (one ruled page).
+- `meeting_notes` defaults to true: when the schedule has meetings, each one gets its own
+  half-page ruled section (two per page) after the lined page. Set `false` to skip.
 - `toolbar_side` from `devices.json` so the tool rail stays clear (reMarkable = left).
 - `color: true` only on a colour device (reMarkable Paper Pro); leave false on mono.
 - **Blank template**: omit `items` in priorities/followup and set `blank` (a row count),
@@ -102,6 +104,14 @@ python3 <skill>/scripts/render.py <in.html> "<out.pdf>" <width_mm> <height_mm>
 It uses headless Chrome/Chromium/Edge (falls back to WeasyPrint) and verifies the page
 size matches the device before accepting the PDF. If both are missing it prints exactly
 what to install.
+
+**No Python available?** The scripts are only a convenience. Build the HTML yourself from
+`reference/modules.md` (it is plain string assembly), then render with a direct headless
+Chrome command - no Python needed, the CSS `@page` rule sets the exact size:
+```
+"<chrome>" --headless=new --disable-gpu --no-pdf-header-footer \
+  --print-to-pdf="<out.pdf>" "file://<abs path to in.html>"
+```
 
 Name the file the Folio way, in the user's **local date**:
 `DD.MM.YYYY - Daily Plan - <Device label>.pdf` (e.g. `21.09.2026 - Daily Plan - reMarkable Paper Pro.pdf`).
