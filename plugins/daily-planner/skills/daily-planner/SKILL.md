@@ -65,31 +65,34 @@ Ask what to pull data from, using whatever MCPs/tools are actually available thi
 For anything not connected, just ask the user for that section's content. Do not block on
 a missing integration; fall back to interviewing.
 
-## Step 6 - Build the HTML
+## Step 6 - Build the HTML from a data file
 
-Follow `reference/modules.md` (it has the exact HTML for every module):
-- Write the page-setup head with the **literal** `@page { size: <w>mm <h>mm; margin: ... }`
-  from the chosen device. Margins live in the `@page` rule so every page (incl. an extra
-  lined page) gets them; give the **toolbar side the wider margin** (reMarkable = left ->
-  `12mm 12mm 12mm 18mm`; Supernote = right -> `12mm 18mm 12mm 12mm`; Kindle = `12mm`).
-- Paste the full contents of `assets/planner.css` into the `<style>`.
-- On a **colour** device (reMarkable Paper Pro) use `<body class="color">` so the weather
-  icon renders warm; omit the class on mono devices (the sun falls back to black).
-- Weather: pick the icon for the condition from `assets/weather-icons.md`, and wrap every
-  degree mark in `<span class="deg">&deg;</span>`.
-- Assemble: header, weather, then `.cols` (schedule left; priorities + follow-up right),
-  then a full-width notes module, then the footer. A half-hour schedule (09:00-17:00) is a
-  good work-day default; add `half` to each `:30` row.
-- If the user wants more writing room, add one or more `.page2` lined pages after the
-  `.sheet` (see `reference/modules.md`).
+Put everything you gathered into one JSON file and run the builder. The builder holds all
+the fixed design decisions (layout, fonts, e-ink rules, half-hour schedule, week/hourly
+weather, blank write-on rows, notes box that fills, toolbar-clear per-page margins, lined
+pages) so you only supply *data* and the sheet is reproducible from live data any time.
 
-**E-ink rules (do not break these - see the device `render.guidelines`):**
-- Body text pure black. Form lines, rules and boxes at 30-40% black (`#999`-`#a8a8a8`).
-- Line weights already set in pt so they snap near whole device pixels. No 1px hairlines.
-- No pale greys (`#e0e0e0`+ vanish), no gradients, no tinted/shaded backgrounds. White ground only.
-- Keep everything inside `page_mm`; the device does not scale the page.
+```
+python3 <skill>/scripts/build_sheet.py <data.json> <out.html>
+```
 
-Write the HTML to a temp file (use the scratchpad, not the repo).
+The JSON shape and every field are documented at the top of `scripts/build_sheet.py`
+(and the look of each module in `reference/modules.md`). See
+`reference/example-data.json` for a complete, working example to copy.
+
+**Defaults (the house style - use unless the user says otherwise):**
+- Weather `mode: "week"` (7-day outlook). Use `"hourly"` only if the user wants hour-by-hour.
+- Schedule `start "09:00" end "17:00" step_min 30` (a half-hour work-day grid).
+- `notes: true` (a notes box that fills to the footer) and `lined_pages: 1` (one ruled page).
+- `toolbar_side` from `devices.json` so the tool rail stays clear (reMarkable = left).
+- `color: true` only on a colour device (reMarkable Paper Pro); leave false on mono.
+- **Blank template**: omit `items` in priorities/followup and set `blank` (a row count),
+  but still fill date, location, week/day and live weather.
+- Map open-meteo `weather_code` to an icon/condition with the `WMO` table in `build_sheet.py`.
+
+The e-ink rules (pure-black text, 30-40% form lines, whole-pixel strokes, no hairlines /
+greys / gradients, everything inside `page_mm`) are already baked into `planner.css`;
+do not override them. Write the JSON and HTML to the scratchpad, not the repo.
 
 ## Step 7 - Render to PDF
 
@@ -115,9 +118,12 @@ Name the file the Folio way, in the user's **local date**:
 Confirm to the user what was sent, to which device, and the file name. Keep it short.
 
 ## Notes
-- Everything the skill needs is in this folder: `reference/devices.json`,
-  `reference/modules.md`, `assets/planner.css`, `assets/weather-icons.md`,
-  `scripts/render.py`.
+- Everything the skill needs is in this folder: `scripts/build_sheet.py` (data -> HTML),
+  `scripts/render.py` (HTML -> PDF), `reference/example-data.json` (a full working data
+  file to copy), `reference/devices.json`, `reference/modules.md`, `assets/planner.css`,
+  `assets/weather-icons.md`.
+- Recreate any day: edit a copy of `example-data.json` with live data, run `build_sheet.py`
+  then `render.py`. `modules.md` is the reference for hand-building or custom layouts.
 - The reference layout: header + full-width weather strip on top, then two columns
   (schedule timeline left; priorities + follow-up right), then a full-width notes box and
   a small footer. Fonts prefer Georgia / Helvetica Neue / Menlo and fall back to Google's

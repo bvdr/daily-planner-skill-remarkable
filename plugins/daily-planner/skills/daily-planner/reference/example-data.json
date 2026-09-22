@@ -1,0 +1,55 @@
+{
+  "page_mm": [179.7, 239.5],
+  "toolbar_side": "left",
+  "color": true,
+  "device_label": "reMarkable Paper Pro",
+  "date_line": "Tuesday, 22 September",
+  "location": "Bucharest",
+  "week": 39,
+  "day_of_year": 265,
+  "weather": {
+    "current": {"temp": 17, "cond": "Partly cloudy", "icon": "partly-cloudy-day"},
+    "mode": "week",
+    "week": [
+      {"day": "Tue", "icon": "cloudy",    "hi": 20, "lo": 12},
+      {"day": "Wed", "icon": "cloudy",    "hi": 19, "lo": 10},
+      {"day": "Thu", "icon": "cloudy",    "hi": 22, "lo": 7},
+      {"day": "Fri", "icon": "cloudy",    "hi": 24, "lo": 7},
+      {"day": "Sat", "icon": "cloudy",    "hi": 24, "lo": 13},
+      {"day": "Sun", "icon": "fog",       "hi": 26, "lo": 10},
+      {"day": "Mon", "icon": "clear-day", "hi": 26, "lo": 11}
+    ]
+  },
+  "schedule": {
+    "start": "09:00", "end": "17:00", "step_min": 30,
+    "count_label": "4 events",
+    "events": {
+      "09:00": {"text": "Standup", "dur": "15m"},
+      "11:00": {"text": "Folio MCP review with design"},
+      "14:00": {"text": "1:1 &mdash; platform team"},
+      "16:00": {"text": "Deep work &mdash; send-file polish", "dur": "2h"}
+    }
+  },
+  "priorities": {
+    "count_label": "3 of 6",
+    "items": [
+      {"text": "Ship reMarkable send-file spine", "tag": "Folio &middot; due today"},
+      {"text": "Review Saxony-Anhalt dossier render", "tag": "Folio"},
+      {"text": "Reply to Q4 roadmap thread", "tag": "Slack &middot; owed since Tue"},
+      {"text": "Invoice batch &mdash; Oblio", "tag": "Admin"},
+      {"text": "Book flights for CloudFest", "tag": "Personal"},
+      {"text": "&rarr; Draft Q3 retro notes", "tag": "Carried 2 days"}
+    ]
+  },
+  "followup": {
+    "count_label": "GitHub &middot; 3",
+    "items": [
+      {"ref": "bvdr/folio #412", "age": "3d", "title": "Tables dropped in MCP read path (turndown, no GFM)", "meta": "Awaiting your review"},
+      {"ref": "bvdr/folio #407", "age": "5d", "title": "Issue render exceeds 8 min on single-article digests", "meta": "Needs repro &middot; assigned to you"},
+      {"ref": "bvdr/promptlyai #96", "age": "1w", "title": "Streaming responses drop final token on retry", "meta": "Blocked on upstream SDK"}
+    ]
+  },
+  "notes": true,
+  "lined_pages": 1,
+  "footer_left": "Tuesday, 22 September &middot; Folio"
+}
