@@ -195,3 +195,15 @@ Reuse the same classes.
 - **brain-dump** — a large `.dotted` ruled block, or a second `.notes__box`.
 
 Compact devices (Kindle, Supernote Nomad) should carry 3-4 modules max.
+
+## Blank / write-on template
+
+To emit a blank sheet the user fills by hand, keep the auto-generated context (date,
+location, week/day number, weather) and blank the task sections. Use the shared
+`.blank-row` (an 11mm write-on row with a bottom rule) so every empty section lines up:
+- **priorities**: `<div class="blank-row prio__blank"><div class="prio__check"></div></div>`
+  (the checkbox is vertically centred in the row).
+- **follow-up** (and any other empty list): `<div class="blank-row"></div>` (same spacing,
+  no checkbox).
+- **schedule**: the normal `.slot` rows with empty `.slot__event`.
+Weather still needs live data; fetch it even for a blank sheet.
