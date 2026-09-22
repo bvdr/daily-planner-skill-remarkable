@@ -19,7 +19,7 @@
 body.color { --sun: #f4b400; }   /* colour e-ink (reMarkable Paper Pro): warm sun */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: #fff; color: var(--ink); }
+html, body { height: 100%; background: #fff; color: var(--ink); }
 body {
   font-family: var(--sans); font-size: 10pt;
   padding: 0;   /* page margins come from the @page rule so page 2 gets them too */
@@ -76,7 +76,7 @@ body {
 .module__count { letter-spacing: 0.1em; font-weight: 400; font-size: 8pt; }
 
 /* ---- Two-column body ---- */
-.cols { display: flex; gap: 8mm; flex: 1; margin-top: 4mm; }
+.cols { display: flex; gap: 8mm; margin-top: 4mm; }
 .col { flex: 1; display: flex; flex-direction: column; gap: var(--gap); }
 .col--left { flex: 0 0 50%; }
 
@@ -113,6 +113,8 @@ body {
 .fu__meta { font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* ---- Notes / write-on modules ---- */
+.notes-fill { flex: 1; display: flex; flex-direction: column; }
+.notes-fill .module__head { flex: none; }
 .notes__box { flex: 1; min-height: 11mm; border: var(--line) solid var(--form); }
 .lines .ln { border-bottom: var(--line) solid var(--form); height: 8mm; }
 .dotted .ln { border-bottom: var(--line) dotted var(--form); }
